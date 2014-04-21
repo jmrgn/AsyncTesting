@@ -30,7 +30,7 @@ namespace AsyncTesting.BusinessLogic
         public async Task<Employee> GetASpecificEmployee(int id)
         {
             var employee = await DataLayer.GetEmployeeById(id);
-
+            // Do some business logic-esque stuff
             if (employee == null)
             {
                 throw new EntityNotFoundException(string.Format("Get it together, chief. {0} doesn't exit.", id));
