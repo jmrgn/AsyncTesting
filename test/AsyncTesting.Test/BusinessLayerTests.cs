@@ -66,7 +66,7 @@ namespace AsyncTesting.Test
             Assert.That(employee.Person.Name, Is.EqualTo("Test Name")); 
         }
 
-        // STEP 3: Use Task.FromResult, Moq.ReturnsAsync a civilized human being
+        // STEP 3: Use Task.FromResult, Moq.ReturnsAsync like a civilized human being
         [Test]
         public async void ItShouldTestInACivilizedWayWithReturnsAsync()
         {
@@ -79,7 +79,7 @@ namespace AsyncTesting.Test
             Assert.That(employee.Person.Name, Is.EqualTo("Test Name")); 
         }
 
-        // STEP 3: Use Task.FromResult, Moq.ReturnsAsync a civilized human being
+        // STEP 3: Use Task.FromResult, Moq.ReturnsAsync like a civilized human being
         [Test]
         public async void ItShouldTestInACivilizedWayWithTaskFromResult()
         {
