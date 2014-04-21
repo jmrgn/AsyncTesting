@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using AsyncTesting.BusinessLogic;
 using AsyncTesting.DataAccess;
 using AsyncTesting.Errors;
+using AsyncTesting.Models;
+using Moq;
 using NUnit.Framework;
 
 namespace AsyncTesting.Test
@@ -16,11 +18,18 @@ namespace AsyncTesting.Test
         BusinessLayer businessLayer;
         DataLayer dataLayer;
 
+        Mock<IDataLayer> mockedDataLayer;
+        BusinessLayer businessLayerWithMock;
+ 
+
+
         [SetUp]
         public void SetUp()
         {
             dataLayer = new DataLayer(); 
             businessLayer = new BusinessLayer(dataLayer);
+            mockedDataLayer = new Mock<IDataLayer>();
+            businessLayerWithMock = new BusinessLayer(mockedDataLayer.Object);
         }
 
         // STEP 1: Actually execute task, using await in test code
@@ -39,6 +48,36 @@ namespace AsyncTesting.Test
         }
 
         // STEP 2: Ghetto mock w/a delegate
+        [Test]
+        public async void ItShouldExecuteTheDelegateInsteadWhenCallingGetASpecificEmployee()
+        {
+            mockedDataLayer.Setup( d=>d.GetEmployeeById(It.IsAny<int>())).Returns(
+               delegate ()
+               {
+                   var task = new Task<Employee>(delegate()
+                   {
+                       var stubbedEmployee = new Employee();
+                       stubbedEmployee.Id = 1;
+                       stubbedEmployee.EmployeeNumber = "12345";
+                       stubbedEmployee.Person = new Person()
+                       {
+                           Name = "Test Name",
+                           Id =  1,
+                           Description = "A Test Description"
+                       };
+                       return stubbedEmployee;
+                   });
+                   task.Start();
+                   return task;
+               }
+               );
+
+            var employee = await businessLayerWithMock.GetASpecificEmployee(1);
+            Assert.That(employee, Is.Not.Null);
+            Assert.That(employee.Id, Is.EqualTo(1));
+            Assert.That(employee.Person.Name, Is.EqualTo("Test Name")); 
+        }
+
         // STEP 3: Use Task.FromResult, Moq.ReturnsAsync a civilized human being
     }
 }
