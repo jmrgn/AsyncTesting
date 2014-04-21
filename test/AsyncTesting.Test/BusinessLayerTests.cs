@@ -54,19 +54,7 @@ namespace AsyncTesting.Test
             mockedDataLayer.Setup( d=>d.GetEmployeeById(It.IsAny<int>())).Returns(
                delegate ()
                {
-                   var task = new Task<Employee>(delegate()
-                   {
-                       var stubbedEmployee = new Employee();
-                       stubbedEmployee.Id = 1;
-                       stubbedEmployee.EmployeeNumber = "12345";
-                       stubbedEmployee.Person = new Person()
-                       {
-                           Name = "Test Name",
-                           Id =  1,
-                           Description = "A Test Description"
-                       };
-                       return stubbedEmployee;
-                   });
+                   var task = new Task<Employee>(GetStubEmployee);
                    task.Start();
                    return task;
                }
@@ -79,5 +67,43 @@ namespace AsyncTesting.Test
         }
 
         // STEP 3: Use Task.FromResult, Moq.ReturnsAsync a civilized human being
+        [Test]
+        public async void ItShouldTestInACivilizedWayWithReturnsAsync()
+        {
+            mockedDataLayer.Setup(d => d.GetEmployeeById(It.IsAny<int>()))
+                .ReturnsAsync(GetStubEmployee());
+
+            var employee = await businessLayerWithMock.GetASpecificEmployee(1);
+            Assert.That(employee, Is.Not.Null);
+            Assert.That(employee.Id, Is.EqualTo(1));
+            Assert.That(employee.Person.Name, Is.EqualTo("Test Name")); 
+        }
+
+        // STEP 3: Use Task.FromResult, Moq.ReturnsAsync a civilized human being
+        [Test]
+        public async void ItShouldTestInACivilizedWayWithTaskFromResult()
+        {
+            mockedDataLayer.Setup(d => d.GetEmployeeById(It.IsAny<int>()))
+                .Returns(Task.FromResult<Employee>(GetStubEmployee()));
+
+            var employee = await businessLayerWithMock.GetASpecificEmployee(1);
+            Assert.That(employee, Is.Not.Null);
+            Assert.That(employee.Id, Is.EqualTo(1));
+            Assert.That(employee.Person.Name, Is.EqualTo("Test Name"));
+        }
+
+        public Employee GetStubEmployee()
+        {
+            var stubbedEmployee = new Employee();
+            stubbedEmployee.Id = 1;
+            stubbedEmployee.EmployeeNumber = "12345";
+            stubbedEmployee.Person = new Person()
+            {
+                Name = "Test Name",
+                Id = 1,
+                Description = "A Test Description"
+            };
+            return stubbedEmployee; 
+        }
     }
 }
