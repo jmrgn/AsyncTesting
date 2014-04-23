@@ -119,8 +119,6 @@ namespace AsyncTesting.Test
             Assert.That(employee.Id, Is.EqualTo(1)); 
         }
 
-        
-
         public Employee GetStubEmployee()
         {
             var stubbedEmployee = new Employee();
