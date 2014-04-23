@@ -96,7 +96,7 @@ namespace AsyncTesting.Test
         // Result for completion. Don't Do this. Error handling is more complex and this is
         // less explicit
         [Test]
-        public async void ItShouldTestWithARunAndBlockOnResult()
+        public void ItShouldTestWithARunAndBlockOnResult()
         {
             var employeeTask = Task.Run(() => businessLayer.GetASpecificEmployee(1));
             var employee = employeeTask.Result;
@@ -109,7 +109,7 @@ namespace AsyncTesting.Test
         // for task completion. Don't Do this. Error handling is more complex and this is
         // less explicit
         [Test]
-        public async void ItShouldTestWithARunAndWait()
+        public void ItShouldTestWithARunAndWait()
         {
             var employeeTask = Task.Run(() => businessLayer.GetASpecificEmployee(1));
             employeeTask.Wait();
