@@ -92,6 +92,33 @@ namespace AsyncTesting.Test
             Assert.That(employee.Person.Name, Is.EqualTo("Test Name"));
         }
 
+        // Final pt. A, for completness' sake, add in the an explicit Run and use blocking 
+        // Result for completion. Don't Do this. Error handling is more complex and this is
+        // less explicit
+        [Test]
+        public async void ItShouldTestWithARunAndBlockOnResult()
+        {
+            var employeeTask = Task.Run(() => businessLayer.GetASpecificEmployee(1));
+            var employee = employeeTask.Result;
+
+            Assert.That(employee, Is.Not.Null);
+            Assert.That(employee.Id, Is.EqualTo(1));
+        }
+
+        // Final pt. B, for completness' sake, add in the an explicit Run/Wait 
+        // for task completion. Don't Do this. Error handling is more complex and this is
+        // less explicit
+        [Test]
+        public async void ItShouldTestWithARunAndWait()
+        {
+            var employeeTask = Task.Run(() => businessLayer.GetASpecificEmployee(1));
+            employeeTask.Wait();
+            var employee = employeeTask.Result;
+
+            Assert.That(employee, Is.Not.Null);
+            Assert.That(employee.Id, Is.EqualTo(1)); 
+        }
+
         public Employee GetStubEmployee()
         {
             var stubbedEmployee = new Employee();
